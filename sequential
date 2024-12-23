@@ -1,0 +1,52 @@
+#include<stdio.h>
+#include<string.h>
+
+// Structure to store file information
+struct FileTable {
+    char fileName[20];
+    int startingBlock;
+    int numberOfBlocks;
+} files[20];
+
+int main() {
+    int numberOfFiles;
+    printf("Enter the number of files: ");
+    scanf("%d", &numberOfFiles);
+
+    // Input file details
+    for (int i = 0; i < numberOfFiles; i++) {
+        printf("Enter the name of file %d: ", i + 1);
+        scanf("%s", files[i].fileName);
+        printf("Enter the starting block of file %d: ", i + 1);
+        scanf("%d", &files[i].startingBlock);
+        printf("Enter the number of blocks of file %d: ", i + 1);
+        scanf("%d", &files[i].numberOfBlocks);
+    }
+
+    // Search for a file
+    printf("Enter the file name to be searched: ");
+    char searchFileName[20];
+    scanf("%s", searchFileName);
+
+    int fileIndex = -1; // Variable to track file index
+    for (int i = 0; i < numberOfFiles; i++) {
+        if (strcmp(files[i].fileName, searchFileName) == 0) {
+            fileIndex = i; // File found
+            break;
+        }
+    }
+
+    // Display results
+    if (fileIndex == -1) {
+        printf("File not found\n");
+    } else {
+        printf("NAME\tSTART BLOCK\tNUMBER OF BLOCKS\tBLOCKS\n");
+        printf("%s\t%d\t\t%d\t\t\t", files[fileIndex].fileName, files[fileIndex].startingBlock, files[fileIndex].numberOfBlocks);
+        for (int j = 0; j < files[fileIndex].numberOfBlocks; j++) {
+            printf("%d ", files[fileIndex].startingBlock + j);
+        }
+        printf("\n");
+    }
+
+    return 0;
+}
