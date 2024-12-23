@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <conio.h>
+
+main() {
+    int referenceString[50], i, j, k, totalReferences, numFrames, nextUse[20], frames[20], pageFaults = 0;
+    clrscr();  // Clears the screen (specific to old Turbo C or similar environments)
+    
+    // Input: Number of page references
+    printf("\nEnter number of page references: ");
+    scanf("%d", &totalReferences);
+    
+    // Input: The reference string (page requests)
+    printf("\nEnter the reference string: ");
+    for (i = 0; i < totalReferences; i++) {
+        scanf("%d", &referenceString[i]);
+    }
+    
+    // Input: Number of frames in memory
+    printf("\nEnter the available number of frames: ");
+    scanf("%d", &numFrames);
+
+    // Initialize the arrays
+    for (i = 0; i < numFrames; i++) {
+        nextUse[i] = 0;  // Next use counter
+        frames[i] = -1;  // Frames are initially empty
+    }
+
+    printf("\nThe Page Replacement Process is:\n");
+    
+    // Simulate the Optimal Page Replacement Process
+    for (i = 0; i < totalReferences; i++) {
+        // Check if the page is already in one of the frames
+        for (j = 0; j < numFrames; j++) {
+            if (referenceString[i] == frames[j]) {
+                nextUse[j]++;  // Increment the usage counter
+                break;
+            }
+        }
+
+        // If the page is not found in any frame, perform replacement
+        if (j == numFrames) {
+            // Find the frame to replace (the one that won't be used for the longest time)
+            int furthestUse = -1;
+            for (k = 0; k < numFrames; k++) {
+                nextUse[k] = 0;  // Reset the usage counter for this frame
+                for (int l = i + 1; l < totalReferences; l++) {
+                    if (referenceString[l] == frames[k]) {
+                        nextUse[k] = l;
+                        break;
+                    }
+                }
+
+                // If no future use is found, mark it as the furthest page
+                if (nextUse[k] == 0) {
+                    frames[k] = referenceString[i];
+                    pageFaults++;  // Increment page faults
+                    break;
+                }
+                
+                // Find the frame with the furthest future use
+                if (nextUse[k] > furthestUse) {
+                    furthestUse = nextUse[k];
+                    frames[k] = referenceString[i];  // Replace the frame with the page
+                    pageFaults++;
+                }
+            }
+        }
+
+        // Print the current state of the frames
+        for (j = 0; j < numFrames; j++) {
+            printf("\t%d", frames[j]);
+        }
+
+        // Print the page fault number
+        if (j == numFrames) {
+            printf("\tPF No. %d", pageFaults);
+        }
+
+        printf("\n");
+    }
+
+    // Output: The total number of page faults
+    printf("\nTotal number of page faults: %d", pageFaults);
+
+    getch();  // Wait for a key press (specific to old Turbo C or similar environments)
+}
