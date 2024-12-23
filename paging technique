@@ -1,0 +1,57 @@
+#include<stdio.h>
+
+int main() {
+    int memorySize, pageSize, numProcesses, remainingPages, logicalAddress, processNumber, pageNumber, offset;
+    int pageTable[20][20], pagesRequired[20];
+    
+    // Getting the size of memory and pages
+    printf("Enter the Memory Size: ");
+    scanf("%d", &memorySize);
+    printf("Enter the Page Size: ");
+    scanf("%d", &pageSize);
+    
+    // Number of pages that can fit in memory
+    int numPages = memorySize / pageSize;
+    printf("Number of Pages Available: %d\n", numPages);
+    
+    // Getting the number of processes
+    printf("Enter the Number of Processes: ");
+    scanf("%d", &numProcesses);
+    
+    remainingPages = numPages;  // Remaining available pages in memory
+
+    // Input the pages required for each process
+    for (int i = 0; i < numProcesses; i++) {
+        printf("Enter Pages Required for P[%d]: ", i + 1);
+        scanf("%d", &pagesRequired[i]);
+
+        // Check if the process can fit into the remaining memory
+        if (pagesRequired[i] > remainingPages) {
+            printf("\nMemory is Full\n");
+            break;
+        }
+        remainingPages -= pagesRequired[i];
+
+        // Input the page table for the current process
+        printf("Enter Page Table for P[%d]: \n", i + 1);
+        for (int j = 0; j < pagesRequired[i]; j++) {
+            scanf("%d", &pageTable[i][j]);
+        }
+    }
+
+    // Input the logical address to be converted to a physical address
+    printf("\nEnter the Logical Address to find the Physical Address\n");
+    printf("Enter process number, page number, and offset\n");
+    scanf("%d %d %d", &processNumber, &pageNumber, &offset);
+
+    // Validate the input for process, page, and offset
+    if (processNumber < 0 || processNumber >= numProcesses || pageNumber >= pagesRequired[processNumber] || offset >= pageSize) {
+        printf("Invalid Input\n");
+    } else {
+        // Calculate the physical address
+        int physicalAddress = pageTable[processNumber][pageNumber] * pageSize + offset;
+        printf("The Physical Address is: %d\n", physicalAddress);
+    }
+
+    return 0;
+}
