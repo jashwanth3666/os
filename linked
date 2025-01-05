@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <conio.h>
+#include <stdlib.h>
+
+void main() {
+    int fileBlocks[50], totalPreAllocatedBlocks, i, startBlock, length, j, continueFlag, currentLength, blockIndex;
+    clrscr();
+
+    // Initialize all blocks as free (0)
+    for (i = 0; i < 50; i++) {
+        fileBlocks[i] = 0;
+    }
+
+    // Input: Number of pre-allocated blocks
+    printf("Enter how many blocks already allocated: ");
+    scanf("%d", &totalPreAllocatedBlocks);
+
+    // Input: Indices of pre-allocated blocks
+    printf("Enter blocks already allocated: ");
+    for (i = 0; i < totalPreAllocatedBlocks; i++) {
+        scanf("%d", &blockIndex);
+        fileBlocks[blockIndex] = 1; // Mark the block as allocated
+    }
+
+    // Process file allocation
+    do {
+        printf("Enter index starting block and length: ");
+        scanf("%d%d", &startBlock, &length);
+
+        currentLength = length;
+
+        // Check if the starting block is free
+        if (fileBlocks[startBlock] == 0) {
+            for (j = startBlock; j < (startBlock + currentLength); j++) {
+                if (fileBlocks[j] == 0) {
+                    fileBlocks[j] = 1; // Allocate the block
+                    printf("%d\t>%d\n", j, fileBlocks[j]);
+                } else {
+                    printf("%d\tBlock is already allocated\n", j);
+                    currentLength++; // Adjust length to compensate
+                }
+            }
+        } else {
+            printf("%d starting block is already allocated.\n", startBlock);
+        }
+
+        // Ask the user if they want to continue
+        printf("Do you want to enter more file (Yes - 1 / No - 0): ");
+        scanf("%d", &continueFlag);
+
+    } while (continueFlag == 1);
+
+    exit(0);
+    getch();
+}
