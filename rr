@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <conio.h>
+
+// Structure to store process information
+struct Process {
+    char name[10]; // Process name
+    int burstTime; // Burst time
+    int completionTime; // Completion time
+    int remainingTime; // Remaining burst time
+} processes[10];
+
+void main() {
+    int i, remainingProcesses, numProcesses, timeQuantum;
+    int waitingTime[10], turnaroundTime[10], currentTime = 0;
+    float averageWaitingTime = 0.0;
+
+    clrscr();
+
+    // Input: Number of processes
+    printf("Enter the number of processes: ");
+    scanf("%d", &numProcesses);
+
+    // Input: Process names and burst times
+    printf("Enter the process name and burst time for %d processes:\n", numProcesses);
+    for (i = 0; i < numProcesses; i++) {
+        scanf("%s %d", processes[i].name, &processes[i].burstTime);
+        processes[i].remainingTime = processes[i].burstTime; // Initialize remaining time
+    }
+
+    // Input: Time quantum
+    printf("Enter the time quantum: ");
+    scanf("%d", &timeQuantum);
+
+    remainingProcesses = numProcesses;
+
+    // Round Robin Scheduling
+    while (remainingProcesses > 0) {
+        for (i = 0; i < numProcesses; i++) {
+            if (processes[i].remainingTime >= timeQuantum) {
+                processes[i].remainingTime -= timeQuantum;
+                currentTime += timeQuantum;
+            } else if (processes[i].remainingTime > 0) {
+                currentTime += processes[i].remainingTime;
+                processes[i].remainingTime = 0;
+            } else {
+                continue;
+            }
+
+            // If the process is completed
+            if (processes[i].remainingTime == 0) {
+                remainingProcesses--;
+                turnaroundTime[i] = currentTime; // Turnaround time is the current time
+            }
+        }
+    }
+
+    // Calculate completion times and waiting times
+    for (i = 0; i < numProcesses; i++) {
+        processes[i].completionTime = turnaroundTime[i];
+        waitingTime[i] = turnaroundTime[i] - processes[i].burstTime;
+    }
+
+    // Output: Process details
+    printf("\nProcess\tBurst Time\tCompletion Time\tTurnaround Time\tWaiting Time\n\n");
+    for (i = 0; i < numProcesses; i++) {
+        printf("%-7s\t%10d\t%15d\t%15d\t%12d\n", 
+               processes[i].name, processes[i].burstTime, processes[i].completionTime, 
+               turnaroundTime[i], waitingTime[i]);
+        averageWaitingTime += waitingTime[i];
+    }
+
+    // Calculate and print average waiting time
+    averageWaitingTime /= numProcesses;
+    printf("\nAverage Waiting Time = %.2f\n", averageWaitingTime);
+
+    getch();
+}
